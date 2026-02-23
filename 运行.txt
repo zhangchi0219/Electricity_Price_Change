@@ -1,1 +1,0 @@
-cd fusion-energy-app && npm run dev 
