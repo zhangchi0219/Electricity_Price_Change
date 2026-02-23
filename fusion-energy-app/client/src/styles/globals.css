@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #0A0A0F;
+  --bg-secondary: #FAFAFA;
+  --bg-card: #FFFFFF;
+  --bg-card-dark: #141420;
+  --text-primary: #1A1A2E;
+  --text-secondary: #6B7280;
+  --text-on-dark: #E5E7EB;
+  --accent-red: #EF4444;
+  --accent-purple: #8B5CF6;
+  --accent-blue: #3B82F6;
+  --accent-green: #22C55E;
+  --accent-cyan: #06B6D4;
+  --accent-amber: #F59E0B;
+  --accent-pink: #EC4899;
+  --geo-line: rgba(255, 255, 255, 0.08);
+  --geo-line-light: rgba(0, 0, 0, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: 'Space Grotesk', 'Noto Sans SC', -apple-system, 'PingFang SC', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-primary);
+  color: var(--text-on-dark);
+  overflow-x: hidden;
+}
+
+/* Geometric grid background */
+.geo-grid-dark {
+  background-image:
+    linear-gradient(var(--geo-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--geo-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+.geo-grid-light {
+  background-image:
+    linear-gradient(var(--geo-line-light) 1px, transparent 1px),
+    linear-gradient(90deg, var(--geo-line-light) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* Scroll progress bar */
+#scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #3B82F6, #8B5CF6, #EC4899);
+  z-index: 9999;
+  transform-origin: left;
+}
+
+/* Section transitions */
+.section-dark {
+  background-color: var(--bg-primary);
+  color: var(--text-on-dark);
+}
+
+.section-light {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* Geometric card hover glow */
+.card-glow {
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+.card-glow:hover {
+  transform: translateY(-4px);
+}
+
+/* Impact meter dots */
+.impact-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 4px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Selection */
+::selection {
+  background: rgba(59, 130, 246, 0.3);
+}
