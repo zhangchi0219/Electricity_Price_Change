@@ -1,0 +1,19 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY server/package.json ./server/
+COPY package.json package-lock.json ./
+
+RUN npm install --workspace=server
+
+COPY server/ ./server/
+
+RUN npm run build --workspace=server
+
+# Copy data files for libsql
+COPY server/data/ ./server/data/
+
+EXPOSE 3001
+
+CMD ["npm", "run", "start", "--workspace=server"]
