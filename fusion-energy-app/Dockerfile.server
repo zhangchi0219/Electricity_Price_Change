@@ -11,9 +11,6 @@ COPY server/ ./server/
 
 RUN npm run build --workspace=server
 
-# Copy data files for libsql
-COPY server/data/ ./server/data/
-
 EXPOSE 3001
 
 CMD ["npm", "run", "start", "--workspace=server"]
