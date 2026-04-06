@@ -3,10 +3,7 @@ dist/
 .env
 *.local
 
-# SQLite 数据库文件
-server/data/*.db
-server/data/*.db-shm
-server/data/*.db-wal
+
 
 # 构建产物
 client/dist/
