@@ -1,5 +1,6 @@
 import express from 'express';
 import { corsMiddleware } from './middleware/cors';
+import { initDatabase } from './db/init';
 import categoriesRouter from './routes/categories';
 import industriesRouter from './routes/industries';
 import fusionRouter from './routes/fusion';
@@ -28,8 +29,22 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
+// Global error handler — prevents unhandled route errors from crashing the process
+app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error('Unhandled error:', err.message);
+  res.status(500).json({ error: 'Internal server error' });
 });
+
+// Initialize DB, then start server
+initDatabase()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running at http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Failed to initialize database:', err);
+    process.exit(1);
+  });
 
 export default app;

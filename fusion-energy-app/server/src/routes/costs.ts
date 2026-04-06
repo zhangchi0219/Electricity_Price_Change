@@ -7,23 +7,28 @@ const router = Router();
 
 // GET /api/costs?source=fusion&year_min=2030
 router.get('/', async (req, res) => {
-  const { source, year_min } = req.query;
+  try {
+    const { source, year_min } = req.query;
 
-  const conditions = [];
-  if (source && typeof source === 'string') {
-    conditions.push(eq(cost_data.energy_source, source));
+    const conditions = [];
+    if (source && typeof source === 'string') {
+      conditions.push(eq(cost_data.energy_source, source));
+    }
+    if (year_min) {
+      const yr = parseInt(year_min as string, 10);
+      if (!isNaN(yr)) conditions.push(gte(cost_data.year, yr));
+    }
+
+    const data =
+      conditions.length > 0
+        ? await db.select().from(cost_data).where(and(...conditions))
+        : await db.select().from(cost_data);
+
+    res.json(data);
+  } catch (err) {
+    console.error('Error fetching cost data:', err);
+    res.status(500).json({ error: 'Internal server error' });
   }
-  if (year_min) {
-    const yr = parseInt(year_min as string, 10);
-    if (!isNaN(yr)) conditions.push(gte(cost_data.year, yr));
-  }
-
-  const data =
-    conditions.length > 0
-      ? await db.select().from(cost_data).where(and(...conditions))
-      : await db.select().from(cost_data);
-
-  res.json(data);
 });
 
 export default router;
