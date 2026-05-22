@@ -3,23 +3,22 @@
 ========================================
 
 【应用简介】
-本项目是一个全栈交互式教学网页应用，主题为便宜电力与核聚变。
-前端使用 React + Vite + Three.js + D3.js + TailwindCSS 构建，
-后端使用 Express + Drizzle ORM + libSQL 构建。
+本项目是一个纯前端交互式教学网页应用，主题为便宜电力与核聚变。
+所有数据以静态模块形式打包进客户端 bundle，无需后端服务。
 
 【技术栈】
   前端：React 18, Vite 5, TypeScript, Three.js, D3.js, Framer Motion, TailwindCSS
-  后端：Express 4, Drizzle ORM, libSQL, TypeScript
-  部署：Docker Compose, nginx
+  数据：静态 TS 模块（client/src/data/seed.ts）
+  部署：Docker Compose + nginx（纯静态托管）
 
 【项目结构】
   fusion-energy-app/
-  ├── client/          前端 (React + Vite)
-  ├── server/          后端 (Express API)
+  ├── client/                前端 (React + Vite)
+  │   └── src/data/seed.ts   全部种子数据
   ├── docker-compose.yml
   ├── Dockerfile.client
-  ├── Dockerfile.server
-  └── nginx.conf
+  ├── nginx.conf
+  └── package.json
 
 ========================================
   Docker 运行方式
@@ -27,15 +26,14 @@
 
 1. 确保已安装 Docker 和 Docker Compose
 
-2. 构建并启动所有服务：
+2. 构建并启动服务：
    docker compose up --build
 
 3. 后台运行：
    docker compose up --build -d
 
 4. 访问应用：
-   前端页面：http://localhost
-   后端 API：http://localhost:3001
+   http://localhost
 
 5. 查看日志：
    docker compose logs -f
@@ -54,9 +52,23 @@
    cd fusion-energy-app
    npm install
 
-2. 启动开发服务器（前后端同时启动）：
+2. 启动 Vite 开发服务器：
    npm run dev
 
 3. 访问应用：
-   前端页面：http://localhost:5173
-   后端 API：http://localhost:3001
+   http://localhost:5173
+
+========================================
+  生产构建（不使用 Docker）
+========================================
+
+1. 构建静态产物：
+   npm run build
+
+2. 输出位于 client/dist/，可部署到任意静态托管：
+   - Vercel / Netlify / Cloudflare Pages
+   - GitHub Pages
+   - 任意 nginx / Apache / CDN
+
+3. 本地预览构建产物：
+   npm run preview --workspace=client

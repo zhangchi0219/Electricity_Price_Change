@@ -1,49 +1,98 @@
-import axios from 'axios';
-import type { Category, Industry, FusionApproach, TimelineEvent, CostData, QuizQuestion } from '../types';
+import type {
+  Category,
+  Industry,
+  FusionApproach,
+  TimelineEvent,
+  CostData,
+  QuizQuestion,
+} from '../types';
+import {
+  categories,
+  industries,
+  fusionApproaches,
+  timelineEvents,
+  costData,
+  quizQuestions,
+} from '../data/seed';
 
-const api = axios.create({
-  baseURL: '/api',
-  timeout: 10000,
-});
+const ok = <T>(value: T): Promise<T> => Promise.resolve(value);
 
-export const getCategories = () =>
-  api.get<Category[]>('/categories').then((r) => r.data);
+export const getCategories = (): Promise<Category[]> =>
+  ok([...categories].sort((a, b) => a.sort_order - b.sort_order));
 
-export const getCategoryIndustries = (slug: string) =>
-  api.get<Industry[]>(`/categories/${slug}/industries`).then((r) => r.data);
+export const getCategoryIndustries = (slug: string): Promise<Industry[]> => {
+  const cat = categories.find((c) => c.slug === slug);
+  if (!cat) return Promise.reject(new Error('Category not found'));
+  return ok(
+    industries
+      .filter((i) => i.category_id === cat.id)
+      .sort((a, b) => a.sort_order - b.sort_order)
+  );
+};
 
-export const getIndustries = () =>
-  api.get<Industry[]>('/industries').then((r) => r.data);
+export const getIndustries = (): Promise<Industry[]> =>
+  ok([...industries].sort((a, b) => a.sort_order - b.sort_order));
 
-export const getIndustry = (id: number) =>
-  api.get<Industry>(`/industries/${id}`).then((r) => r.data);
+export const getIndustry = (id: number): Promise<Industry> => {
+  const found = industries.find((i) => i.id === id);
+  return found ? ok(found) : Promise.reject(new Error('Industry not found'));
+};
 
-export const getFusionApproaches = () =>
-  api.get<FusionApproach[]>('/fusion-approaches').then((r) => r.data);
+export const getFusionApproaches = (): Promise<FusionApproach[]> =>
+  ok([...fusionApproaches]);
 
-export const getTimeline = (type?: 'past' | 'current' | 'projected') =>
-  api.get<TimelineEvent[]>('/timeline', { params: type ? { type } : {} }).then((r) => r.data);
+export const getTimeline = (
+  type?: 'past' | 'current' | 'projected'
+): Promise<TimelineEvent[]> => {
+  const filtered = type
+    ? timelineEvents.filter((t) => t.event_type === type)
+    : [...timelineEvents];
+  return ok(filtered.sort((a, b) => a.year - b.year));
+};
 
-export const getCosts = (params?: { source?: string; year_min?: number }) =>
-  api.get<CostData[]>('/costs', { params }).then((r) => r.data);
+export const getCosts = (params?: {
+  source?: string;
+  year_min?: number;
+}): Promise<CostData[]> => {
+  let result = [...costData];
+  if (params?.source) result = result.filter((c) => c.energy_source === params.source);
+  if (params?.year_min !== undefined) {
+    const min = params.year_min;
+    result = result.filter((c) => c.year >= min);
+  }
+  return ok(result);
+};
 
-export const getQuiz = (section?: string) =>
-  api.get<QuizQuestion[]>('/quiz', { params: section ? { section } : {} }).then((r) => r.data);
+export const getQuiz = (section?: string): Promise<QuizQuestion[]> => {
+  const filtered = section
+    ? quizQuestions.filter((q) => q.section === section)
+    : [...quizQuestions].sort((a, b) => a.sort_order - b.sort_order);
+  return ok(filtered);
+};
 
-export const submitQuizAnswer = (question_id: number, selected_label: string, session_id: string) =>
-  api
-    .post<{ correct: boolean; explanation_zh: string | null; explanation_en: string | null }>(
-      '/quiz/answer',
-      { question_id, selected_label, session_id }
-    )
-    .then((r) => r.data);
+export const submitQuizAnswer = (
+  question_id: number,
+  selected_label: string,
+  _session_id: string
+): Promise<{
+  correct: boolean;
+  explanation_zh: string | null;
+  explanation_en: string | null;
+}> => {
+  const question = quizQuestions.find((q) => q.id === question_id);
+  if (!question) return Promise.reject(new Error('Question not found'));
+  const selected = question.options.find((o) => o.label === selected_label);
+  return ok({
+    correct: selected?.correct ?? false,
+    explanation_zh: question.explanation_zh,
+    explanation_en: question.explanation_en,
+  });
+};
 
-export const recordInteraction = (data: {
+export const recordInteraction = (_data: {
   session_id: string;
   interaction_type: 'vote' | 'quiz_answer' | 'bookmark';
   target_type?: string;
   target_id?: number;
   value?: string;
-}) => api.post('/interactions', data).then((r) => r.data);
-
-export default api;
+}): Promise<{ success: boolean }> => ok({ success: true });
