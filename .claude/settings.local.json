@@ -14,7 +14,13 @@
       "Bash(cd /e/GitHub/Electric_Price_Change/Electricity_Price_Change && git add \"运行.txt\" && git commit -m \"$\\(cat <<'EOF'\nUpdate 运行.txt\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\" && git push origin main 2>&1)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(git -C \"E:/GitHub/Electric_Price_Change/Electricity_Price_Change/fusion-energy-app\" rm -r --cached server)",
+      "Bash(npx tsc *)",
+      "Bash(npx vite *)",
+      "Bash(git -C \"E:/GitHub/Electric_Price_Change/Electricity_Price_Change\" status --short)",
+      "Bash(docker compose *)",
+      "Bash(git *)"
     ]
   }
 }
